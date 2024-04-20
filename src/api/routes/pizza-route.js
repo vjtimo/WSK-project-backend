@@ -1,6 +1,6 @@
 import express from 'express';
-import {getPizza} from '../controllers/pizza-controller.js';
+import {getPizza, postProduct} from '../controllers/pizza-controller.js';
 const pizzaRouter = express.Router();
-pizzaRouter.route('/').get(getPizza).post();
+pizzaRouter.route('/').get(getPizza).post(postProduct);
 
 export default pizzaRouter;
