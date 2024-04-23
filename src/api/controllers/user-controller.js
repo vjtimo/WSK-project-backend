@@ -1,9 +1,7 @@
-import {getAllUsers, addUser} from '../models/user-model.js';
+import {addUser} from '../models/user-model.js';
 import {validationResult} from 'express-validator';
 import bcrypt from 'bcrypt';
-const getUsers = async (req, res) => {
-  res.json(await getAllUsers());
-};
+
 const postUser = async (req, res) => {
   const errors = validationResult(req);
 
@@ -23,4 +21,4 @@ const postUser = async (req, res) => {
   }
 };
 
-export {getUsers, postUser};
+export {postUser};

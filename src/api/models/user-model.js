@@ -1,8 +1,16 @@
 import promisePool from '../../utils/database.js';
-const getAllUsers = async () => {
-  const [rows] = await promisePool.query('SELECT * FROM kayttaja');
-  return rows;
+
+const getUserByName = async (name) => {
+  const sql = `SELECT *
+              FROM kayttaja
+              WHERE tunnus = ?`;
+  const [rows] = await promisePool.execute(sql, [name]);
+  if (rows.length === 0) {
+    return false;
+  }
+  return rows[0];
 };
+
 const addUser = async (user) => {
   const {tunnus, salasana} = user;
   const sql = `INSERT INTO kayttaja (tunnus, salasana)
@@ -16,4 +24,4 @@ const addUser = async (user) => {
   return {user_id: rows[0].insertId};
 };
 
-export {getAllUsers, addUser};
+export {getUserByName, addUser};

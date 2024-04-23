@@ -2,10 +2,9 @@
 import express from 'express';
 import {body} from 'express-validator';
 import {validationErrors} from '../../middlewares.js';
-import {getUsers, postUser} from '../controllers/user-controller.js';
+import {postUser} from '../controllers/user-controller.js';
 const userRouter = express.Router();
 
-userRouter.route('/').get(getUsers);
 userRouter
   .route('/register')
   .post(
