@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import {getUserByname} from '../models/user-model.js';
+import {getUserByName} from '../models/user-model.js';
 import 'dotenv/config';
 
 const postLogin = async (req, res) => {
   console.log('postLogin', req.body);
-  const user = await getUserByname(req.body.tunnus);
+  const user = await getUserByName(req.body.tunnus);
   if (!user) {
     res.sendStatus(401);
     return;
