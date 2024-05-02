@@ -1,7 +1,8 @@
 /* eslint-disable new-cap */
 import express from 'express';
-
+import {getCart} from '../controllers/order-controller.js';
 const orderRouter = express.Router();
-orderRouter.route('/addCart').post(postCart);
+
+orderRouter.route('/:id').get(getCart);
 
 export default orderRouter;
