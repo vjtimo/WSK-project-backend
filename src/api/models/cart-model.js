@@ -4,8 +4,9 @@ const getCartById = async (cartId) => {
   try {
     const sql = `
     SELECT
-      ot.tuote_id,
-      ot.maara
+      o.id,
+      ot.tuote_id as id,
+      ot.maara as quantity
     FROM
       ostoskori AS o
     INNER JOIN
@@ -15,7 +16,6 @@ const getCartById = async (cartId) => {
     WHERE
       o.id = ?`;
     const [rows] = await promisePool.execute(sql, [cartId]);
-
     return rows;
   } catch (error) {
     console.error('Error in getCartById', error);
@@ -37,6 +37,7 @@ const checkCart = async (userId) => {
     if (rows.length === 0) {
       return null; //
     }
+    console.log('WAAAAAAAAAAAAAA', rows);
     return rows[0].id;
   } catch (error) {
     console.error('Error in checkCart:', error);
@@ -48,46 +49,44 @@ const createNewCart = async (userId) => {
   try {
     const sql = `INSERT INTO ostoskori(user_id) VALUES (?)`;
     const [result] = await promisePool.execute(sql, [userId]);
-
     if (result.affectedRows === 0) {
       return false;
     }
 
-    return true;
+    return result.insertId;
   } catch (error) {
     console.error('Error in createNewCart:', error);
     throw error;
   }
 };
 
-const addToCart = async (productId, ostoskoriId, maara) => {
+const addToCart = async (cartId, items) => {
   try {
-    const sql = `INSERT INTO
-    ot.tuote_id,
-    ot.maara
-    FROM
-    ostoskori AS o
-  INNER JOIN
-    ostoskori_tuotteet AS ot
-  ON
-    o.id = ot.ostoskori_id
-  WHERE
-    o.user_id = ?`;
-    const [result] = await promisePool.execute(sql, [
-      productId,
-      ostoskoriId,
-      maara,
-    ]);
+    await promisePool.query('START TRANSACTION');
 
-    if (result.affectedRows === 0) {
-      return false;
-    }
+    await promisePool.query(
+      'DELETE FROM ostoskori_tuotteet WHERE ostoskori_id = ?',
+      [cartId]
+    );
+    console.log(items);
+    const values = items.map((item) => [item.id, item.quantity, cartId]);
+    console.log(values);
+    const insertQuery =
+      'INSERT INTO ostoskori_tuotteet (tuote_id, maara, ostoskori_id) VALUES ?';
+    const [result] = await promisePool.query(insertQuery, [values]);
 
-    return true;
+    await promisePool.query('COMMIT');
+    return {success: true, affectedRows: result.affectedRows};
   } catch (error) {
+    await promisePool.query('ROLLBACK');
+
     console.error('Error in addToCart:', error);
-    throw error;
+    return {
+      success: false,
+      message: 'Failed to add/update items in cart',
+      error: error.message,
+    };
   }
 };
 
-export {getCartById, createNewCart, checkCart};
+export {getCartById, createNewCart, checkCart, addToCart};
