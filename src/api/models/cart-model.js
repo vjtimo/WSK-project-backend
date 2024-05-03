@@ -63,7 +63,14 @@ const createNewCart = async (userId) => {
 const addToCart = async (cartId, items) => {
   try {
     await promisePool.query('START TRANSACTION');
-
+    if (items.length === 0) {
+      await promisePool.query(
+        'DELETE FROM ostoskori_tuotteet WHERE ostoskori_id = ?',
+        [cartId]
+      );
+      await promisePool.query('COMMIT');
+      return {success: true, message: 'Shopping cart emptied'};
+    }
     await promisePool.query(
       'DELETE FROM ostoskori_tuotteet WHERE ostoskori_id = ?',
       [cartId]

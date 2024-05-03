@@ -12,9 +12,11 @@ const postOrder = async (req, res) => {
         message: 'Failed to make a new order.',
       });
     }
-    return res
-      .status(200)
-      .json({success: true, message: 'Order succesfully placed'});
+    return res.status(200).json({
+      success: true,
+      message: 'Order succesfully placed',
+      cartId: result.insertId,
+    });
   } catch (e) {
     res
       .status(500)
