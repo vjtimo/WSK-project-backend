@@ -30,7 +30,9 @@ const checkCart = async (userId) => {
     FROM
       ostoskori AS o
     WHERE
-      o.user_id = ?;
+      o.user_id = ?
+    AND
+    o.active = 1;
     `;
     const [rows] = await promisePool.execute(cartCheckSQL, [userId]);
 
