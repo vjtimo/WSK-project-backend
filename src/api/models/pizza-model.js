@@ -20,4 +20,19 @@ const findPizzasById = async (...ids) => {
     throw error;
   }
 };
-export {getAllPizzas, findPizzasById};
+const deletePizzaById = async (active, id) => {
+  try {
+    const [result] = await promisePool.execute(
+      `UPDATE tuote set active = ?  WHERE id = ?`[(active, id)],
+      [id]
+    );
+    if (result.affectedRows === 0) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.error('Error in findPizzaByID:', error);
+    throw error;
+  }
+};
+export {getAllPizzas, findPizzasById, deletePizzaById};

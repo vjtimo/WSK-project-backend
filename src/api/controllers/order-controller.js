@@ -6,66 +6,62 @@ import {
 } from '../models/order-model.js';
 
 const postOrder = async (req, res) => {
-  console.log(req.body);
   const ravintola = req.body.ravintola;
   const ostosId = req.body.ostoskori;
-  try {
-    const result = await addOrder(ravintola, ostosId);
-    if (!result || result.affectedRows === 0) {
-      return res.status(500).json({
-        success: false,
-        message: 'test.',
-      });
-    }
-    return res.status(200).json({
-      success: true,
-      message: 'Order succesfully placed',
-      cartId: result.insertId,
-    });
-  } catch (e) {
-    res
-      .status(500)
-      .json({success: false, message: 'Failed to make a new order'});
+
+  const result = await addOrder(ravintola, ostosId);
+  if (!result || result.affectedRows === 0) {
+    res.sendStatus(500);
   }
+  res.status(200).json({
+    success: true,
+    message: 'Order succesfully placed',
+    cartId: result.insertId,
+  });
 };
 
-const getOrders = async (req, res) => {
+const getOrders = async (req, res, next) => {
   try {
     const result = await findOrders();
     if (!result) {
-      return res.status(400).message('Orders not found');
+      const error = new Error('Orders not found');
+      error.status = 404;
+      next(error);
+      return;
     }
     return res.status(200).json(result);
   } catch (e) {
-    return res.status(500).json.message('Internal server error');
+    next(e);
   }
 };
-const setStatus = async (req, res) => {
-  console.log('TEEEST');
+const setStatus = async (req, res, next) => {
   try {
     const result = await updateStatus(req.body.id, req.body.status);
     if (!result) {
-      res.status(500).json({
-        success: false,
-        message: 'Failed to make a new order.',
-      });
+      const error = new Error('Status was not updated');
+      error.status = 500;
+      next(error);
+      return;
     }
     res.status(200).json('Order status updated');
   } catch (e) {
-    res.json(e.message);
+    next(e);
   }
 };
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
   const id = req.params.id;
-  console.log(id);
   try {
     const result = await findOrderById(id);
-    if (!result) {
-      return res.status(400).message('Orders not found');
+    console.log(result);
+    if (result.length === 0) {
+      const error = new Error('Order not found');
+      error.status = 404;
+      next(error);
+      return;
     }
     return res.status(200).json(result);
   } catch (e) {
-    return res.status(500).json('Internal server error');
+    res.sendStatus(500);
   }
 };
 export {postOrder, getOrders, setStatus, getById};

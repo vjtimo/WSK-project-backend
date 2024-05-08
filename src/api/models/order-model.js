@@ -28,6 +28,7 @@ const addOrder = async (rid, oid) => {
   } catch (e) {
     await promisePool.query('ROLLBACK');
     console.error('Error in addOrder:', e);
+    throw new Error(`Failed to add order: ${e.message}`);
   }
 };
 
@@ -57,7 +58,8 @@ GROUP BY t.id,
     const [rows] = await promisePool.execute(sql);
     return rows;
   } catch (e) {
-    e.message('Internal server errror');
+    console.error(e.message);
+    throw new Error(`Failed to find orders: ${e.message}`);
   }
 };
 const findOrderById = async (id) => {
@@ -86,19 +88,23 @@ GROUP BY t.id,
 
   try {
     const [rows] = await promisePool.execute(sql, [id]);
+    console.log;
     return rows;
   } catch (e) {
-    e.message('Internal server errror');
+    console.error(e.message);
+    throw new Error(`Failed to find order with ID ${id}: ${e.message}`);
   }
 };
 const updateStatus = async (id, status) => {
   status++;
+  console.log('TEST2', status);
   const sql = `UPDATE tilaus SET tilaId = ? where id= ? `;
   try {
-    const [rows] = promisePool.query(sql, [status, id]);
+    const rows = promisePool.query(sql, [status, id]);
     return rows;
   } catch (e) {
-    e.status(500);
+    console.error('Error finding user:', e.message);
+    throw new Error(`Failed to update order with ID ${id}: ${e.message}`);
   }
 };
 export {addOrder, findOrders, updateStatus, findOrderById};

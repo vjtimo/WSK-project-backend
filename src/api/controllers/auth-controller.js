@@ -1,32 +1,32 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import {validationResult} from 'express-validator';
 import {getUserByName} from '../models/user-model.js';
 import 'dotenv/config';
 
-const postLogin = async (req, res) => {
-  console.log('postLogin', req.body);
+const postLogin = async (req, res, next) => {
   const user = await getUserByName(req.body.tunnus);
-  if (!user) {
-    res.sendStatus(401);
-    return;
+  try {
+    if (!user || !bcrypt.compareSync(req.body.salasana, user.salasana)) {
+      const error = new Error('Incorrect username or password');
+      error.status = 401;
+      return next(error);
+    }
+
+    const userWithNoPassword = {
+      id: user.id,
+      tunnus: user.tunnus,
+      rooli: user.rooli,
+    };
+
+    const token = jwt.sign(userWithNoPassword, process.env.JWT_SECRET, {
+      expiresIn: '24h',
+    });
+
+    res.json({user: userWithNoPassword, token});
+  } catch (e) {
+    next(e);
   }
-
-  if (!bcrypt.compareSync(req.body.salasana, user.salasana)) {
-    res.sendStatus(401);
-    return;
-  }
-
-  const userWithNoPassword = {
-    id: user.id,
-    tunnus: user.tunnus,
-    rooli: user.rooli,
-  };
-
-  const token = jwt.sign(userWithNoPassword, process.env.JWT_SECRET, {
-    expiresIn: '24h',
-  });
-
-  res.json({user: userWithNoPassword, token});
 };
 
 const getMe = async (req, res) => {

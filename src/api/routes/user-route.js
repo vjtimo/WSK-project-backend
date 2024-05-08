@@ -8,8 +8,14 @@ const userRouter = express.Router();
 userRouter
   .route('/register')
   .post(
-    body('tunnus').trim().isLength({min: 4, max: 20}),
-    body('salasana').trim().isLength({min: 4, max: 30}),
+    body('tunnus')
+      .trim()
+      .isLength({min: 4, max: 20})
+      .withMessage('Tunnuksessa pitää olla vähintään 4 kirjainta'),
+    body('salasana')
+      .trim()
+      .isLength({min: 4, max: 30})
+      .withMessage('Salasanassa pitää olla 4 merkkiä'),
     validationErrors,
     postUser
   );
