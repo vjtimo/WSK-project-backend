@@ -11,9 +11,8 @@ GROUP by tuote.id;`
   );
   return rows.map((row) => ({
     id: row.id,
-    name: row.pizza_name,
-    filename: row.filename,
-    ingredients: row.ingredients,
+    name: row.nimi,
+    ingredients: row.ainekset,
     imageUrl: `/uploads/${row.image_file}`,
   }));
 };
