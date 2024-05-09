@@ -11,6 +11,7 @@ GROUP by tuote.id;`
   );
   return rows.map((row) => ({
     id: row.id,
+    price: row.hinta,
     name: row.nimi,
     ingredients: row.ainekset,
     imageUrl: `/uploads/${row.image_file}`,
