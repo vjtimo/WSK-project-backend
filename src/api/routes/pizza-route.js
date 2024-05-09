@@ -16,7 +16,6 @@ pizzaRouter
     body('name').notEmpty().escape(),
     body('description').notEmpty().escape(),
     body('category_name').notEmpty().escape(),
-    body('ingredient_names').isArray({min: 1}),
     validationErrors,
     getAiImage,
     saveAiImage,

@@ -75,18 +75,19 @@ const addProduct = async (data) => {
     throw new Error('Ingredient not added');
   }
   const newProductId = result.insertId;
-  for (const ingredient of data.ingredient_names) {
-    const [ingredientResult] = await promisePool.execute(
-      'INSERT INTO tuoteainekset (aine_id, tuote_id) VALUES ((SELECT id FROM aineosa WHERE nimi_fi = ?), ?)',
-      [ingredient, newProductId]
-    );
+  if (data.ingredient.length > 0) {
+    for (const ingredient of data.ingredient_names) {
+      const [ingredientResult] = await promisePool.execute(
+        'INSERT INTO tuoteainekset (aine_id, tuote_id) VALUES ((SELECT id FROM aineosa WHERE nimi_fi = ?), ?)',
+        [ingredient, newProductId]
+      );
 
-    if (ingredientResult.affectedRows === 0) {
-      await promisePool.query('ROLLBACK');
-      throw new Error('Ingredient not added');
+      if (ingredientResult.affectedRows === 0) {
+        await promisePool.query('ROLLBACK');
+        throw new Error('Ingredient not added');
+      }
     }
   }
-
   await promisePool.query('COMMIT');
   return {message: 'Product added'};
 };
