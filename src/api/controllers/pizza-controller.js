@@ -1,4 +1,8 @@
-import {getAllPizzas, findPizzasById} from '../models/pizza-model.js';
+import {
+  getAllPizzas,
+  findPizzasById,
+  addProduct,
+} from '../models/pizza-model.js';
 const getPizza = async (req, res) => {
   res.json(await getAllPizzas());
 };
@@ -49,4 +53,16 @@ const handleDeleteById = async (req, res, next) => {
   }
 };
 
-export {getPizza, getProductsById};
+const productPost = async (req, res, next) => {
+  try {
+    const dish = req.body;
+    dish.filename = res.locals.file;
+    console.log(dish);
+    const result = await addProduct(dish);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {getPizza, getProductsById, productPost};
