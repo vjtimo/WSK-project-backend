@@ -15,6 +15,7 @@ GROUP by tuote.id;`
     name: row.nimi,
     ingredients: row.ainekset,
     imageUrl: `/uploads/${row.image_file}`,
+    kategoria_id: row.kategoria_id,
   }));
 };
 
