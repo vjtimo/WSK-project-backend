@@ -2,6 +2,8 @@ import {
   getAllPizzas,
   findPizzasById,
   addProduct,
+  findAllIngredients,
+  findAllCategories,
 } from '../models/pizza-model.js';
 const getPizza = async (req, res) => {
   res.json(await getAllPizzas());
@@ -64,5 +66,18 @@ const productPost = async (req, res, next) => {
     next(error);
   }
 };
+const getAllIngredients = async (req, res) => {
+  res.json(await findAllIngredients());
+};
 
-export {getPizza, getProductsById, productPost};
+const getAllCategories = async (req, res) => {
+  res.json(await findAllCategories());
+};
+
+export {
+  getPizza,
+  getProductsById,
+  productPost,
+  getAllIngredients,
+  getAllCategories,
+};

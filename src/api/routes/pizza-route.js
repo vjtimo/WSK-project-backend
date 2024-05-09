@@ -3,6 +3,8 @@ import {
   getPizza,
   getProductsById,
   productPost,
+  getAllIngredients,
+  getAllCategories,
 } from '../controllers/pizza-controller.js';
 const pizzaRouter = express.Router();
 import {body} from 'express-validator';
@@ -20,5 +22,8 @@ pizzaRouter
     saveAiImage,
     productPost
   );
+pizzaRouter.route('/ingredients').get(getAllIngredients);
+pizzaRouter.route('/categories').get(getAllCategories);
 pizzaRouter.route('/:ids').get(getProductsById);
+
 export default pizzaRouter;

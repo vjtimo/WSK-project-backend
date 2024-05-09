@@ -90,5 +90,22 @@ const addProduct = async (data) => {
   await promisePool.query('COMMIT');
   return {message: 'Product added'};
 };
+const findAllIngredients = async () => {
+  const [rows] = await promisePool.query(`select nimi_fi from aineosa`);
+  console.log(rows);
+  return rows;
+};
+const findAllCategories = async () => {
+  const [rows] = await promisePool.query(`select kategoria from kategoria`);
+  console.log(rows);
+  return rows;
+};
 
-export {getAllPizzas, findPizzasById, deletePizzaById, addProduct};
+export {
+  getAllPizzas,
+  findPizzasById,
+  deletePizzaById,
+  addProduct,
+  findAllIngredients,
+  findAllCategories,
+};
