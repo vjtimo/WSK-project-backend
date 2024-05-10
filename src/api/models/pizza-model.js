@@ -8,7 +8,7 @@ FROM tuote
     LEFT JOIN tuoteainekset as ta ON tuote.id = ta.tuote_id
     LEFT JOIN aineosa as a on ta.aine_id = a.id
 WHERE active = 1
-GROUP by tuote.id;`
+GROUP by tuote.id`
   );
   return rows.map((row) => ({
     id: row.id,
@@ -19,7 +19,28 @@ GROUP by tuote.id;`
     kategoria_id: row.kategoria_id,
   }));
 };
-
+const getPopularPizzas = async () => {
+  const [rows] = await promisePool.query(
+    `SELECT tuote.*,
+    image_file,
+    group_concat(a.nimi_fi separator ", ") as ainekset
+    FROM tuote
+    LEFT JOIN tuoteainekset as ta ON tuote.id = ta.tuote_id
+    LEFT JOIN aineosa as a on ta.aine_id = a.id
+    WHERE active = 1
+    GROUP by tuote.id
+    ORDER BY sales DESC -- Sort by sales in descending order
+    LIMIT 4;`
+  );
+  return rows.map((row) => ({
+    id: row.id,
+    price: row.hinta,
+    name: row.nimi,
+    ingredients: row.ainekset,
+    imageUrl: `/uploads/${row.image_file}`,
+    kategoria_id: row.kategoria_id,
+  }));
+};
 const findPizzasById = async (...ids) => {
   try {
     const placeholders = ids.map(() => '?').join(', ');
@@ -110,4 +131,5 @@ export {
   addProduct,
   findAllIngredients,
   findAllCategories,
+  getPopularPizzas,
 };

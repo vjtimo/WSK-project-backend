@@ -5,6 +5,7 @@ import {
   findAllIngredients,
   findAllCategories,
   deletePizzaById,
+  getPopularPizzas,
 } from '../models/pizza-model.js';
 const getPizza = async (req, res) => {
   res.json(await getAllPizzas());
@@ -74,7 +75,9 @@ const getAllIngredients = async (req, res) => {
 const getAllCategories = async (req, res) => {
   res.json(await findAllCategories());
 };
-
+const getPopular = async (req, res) => {
+  res.json(await getPopularPizzas());
+};
 export {
   getPizza,
   getProductsById,
@@ -82,4 +85,5 @@ export {
   getAllIngredients,
   getAllCategories,
   handleDeleteById,
+  getPopular,
 };

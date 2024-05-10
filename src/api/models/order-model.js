@@ -12,6 +12,43 @@ const addOrder = async (rid, oid, toimitustapa) => {
     await promisePool.query(`UPDATE ostoskori SET active = 0 WHERE id = ?`, [
       oid,
     ]);
+
+    const [salesArray] = await promisePool.query(
+      `SELECT tuote_id, maara FROM ostoskori_tuotteet WHERE ostoskori_id = ?`,
+      [oid]
+    );
+    const ids = salesArray.map((sales) => sales.tuote_id);
+    const idPlaceholders = ids.map(() => '?').join(', ');
+
+    const caseStatement = salesArray
+      .map(
+        (sales) => `
+      WHEN ? THEN ?
+    `
+      )
+      .join(' ');
+
+    const query = `
+      UPDATE tuote
+      SET sales = sales + CASE id
+      ${caseStatement}
+      END
+      WHERE id IN (${idPlaceholders});
+    `;
+
+    const params = [];
+    salesArray.forEach((sales) => {
+      params.push(sales.tuote_id);
+      params.push(sales.maara);
+    });
+    params.push(...ids);
+
+    const [result] = await promisePool.query(query, params);
+    if (result.affectedRows === 0) {
+      console.warn('No rows were updated');
+      await promisePool.query('ROLLBACK');
+      return false;
+    }
     const [rows] = await promisePool.query(
       `INSERT INTO ostoskori (user_id)
        SELECT user_id
@@ -24,7 +61,6 @@ const addOrder = async (rid, oid, toimitustapa) => {
 
     return rows;
   } catch (e) {
-    await promisePool.query('ROLLBACK');
     console.error('Error in addOrder:', e);
     throw new Error(`Failed to add order: ${e.message}`);
   }
