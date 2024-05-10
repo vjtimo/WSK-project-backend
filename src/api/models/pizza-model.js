@@ -97,7 +97,7 @@ const addProduct = async (data) => {
     throw new Error('Ingredient not added');
   }
   const newProductId = result.insertId;
-  if (data.ingredient.length > 0) {
+  if (data.ingredient_names.length > 0) {
     for (const ingredient of data.ingredient_names) {
       const [ingredientResult] = await promisePool.execute(
         'INSERT INTO tuoteainekset (aine_id, tuote_id) VALUES ((SELECT id FROM aineosa WHERE nimi_fi = ?), ?)',
