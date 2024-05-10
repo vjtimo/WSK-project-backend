@@ -5,6 +5,7 @@ import {
   productPost,
   getAllIngredients,
   getAllCategories,
+  handleDeleteById,
 } from '../controllers/pizza-controller.js';
 const pizzaRouter = express.Router();
 import {body} from 'express-validator';
@@ -23,6 +24,6 @@ pizzaRouter
   );
 pizzaRouter.route('/ingredients').get(getAllIngredients);
 pizzaRouter.route('/categories').get(getAllCategories);
-pizzaRouter.route('/:ids').get(getProductsById);
+pizzaRouter.route('/:ids').get(getProductsById).patch(handleDeleteById);
 
 export default pizzaRouter;

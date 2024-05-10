@@ -4,6 +4,7 @@ import {
   addProduct,
   findAllIngredients,
   findAllCategories,
+  deletePizzaById,
 } from '../models/pizza-model.js';
 const getPizza = async (req, res) => {
   res.json(await getAllPizzas());
@@ -44,7 +45,7 @@ const handleDeleteById = async (req, res, next) => {
       return;
     }
 
-    const result = await deleteById(id);
+    const result = await deletePizzaById(id);
     if (!result) {
       return res.status(400).json('asdasdasd');
     }
@@ -80,4 +81,5 @@ export {
   productPost,
   getAllIngredients,
   getAllCategories,
+  handleDeleteById,
 };
