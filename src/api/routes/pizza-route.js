@@ -27,7 +27,7 @@ pizzaRouter
 
 pizzaRouter.route('/ingredients').get(getAllIngredients);
 pizzaRouter.route('/categories').get(getAllCategories);
-pizzaRouter.route('/:id').patch(handleDeleteById);
+pizzaRouter.route('/delete/:id').patch(handleDeleteById);
 pizzaRouter.route('/:ids').get(getProductsById);
 
 export default pizzaRouter;
