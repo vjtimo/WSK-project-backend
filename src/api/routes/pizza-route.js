@@ -11,11 +11,17 @@ import {
 const pizzaRouter = express.Router();
 pizzaRouter.route('/popular').get(getPopular);
 import {body} from 'express-validator';
-import {validationErrors, getAiImage, saveAiImage} from '../../middlewares.js';
+import {
+  validationErrors,
+  getAiImage,
+  saveAiImage,
+  authenticateToken,
+} from '../../middlewares.js';
 pizzaRouter
   .route('/')
   .get(getPizza)
   .post(
+    authenticateToken,
     body('name').notEmpty().escape(),
     body('description').notEmpty().escape(),
     body('category_name').notEmpty().escape(),
