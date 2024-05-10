@@ -9,7 +9,7 @@ const postOrder = async (req, res) => {
   const ravintola = req.body.ravintola;
   const ostosId = req.body.ostoskori;
   const toimitustapa = req.body.toimitustapa;
-
+  console.log(toimitustapa);
   const result = await addOrder(ravintola, ostosId, toimitustapa);
   if (!result || result.affectedRows === 0) {
     res.sendStatus(500);
