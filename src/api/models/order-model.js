@@ -20,10 +20,8 @@ const addOrder = async (rid, oid, toimitustapa) => {
        LIMIT 1`,
       [oid]
     );
-    console.log('asdasdsadsa');
     await promisePool.query('COMMIT');
-    console.log('2asdasdsadsad2');
-    console.log(rows);
+
     return rows;
   } catch (e) {
     await promisePool.query('ROLLBACK');
