@@ -7,6 +7,7 @@ const getAllPizzas = async () => {
 FROM tuote
     LEFT JOIN tuoteainekset as ta ON tuote.id = ta.tuote_id
     LEFT JOIN aineosa as a on ta.aine_id = a.id
+WHERE active = 1
 GROUP by tuote.id;`
   );
   return rows.map((row) => ({
