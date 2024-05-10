@@ -35,10 +35,10 @@ const findPizzasById = async (...ids) => {
     throw error;
   }
 };
-const deletePizzaById = async (active, id) => {
+const deletePizzaById = async (id) => {
   try {
     const [result] = await promisePool.execute(
-      `UPDATE tuote set active = ?  WHERE id = ?`[(active, id)],
+      `UPDATE tuote set active = 0  WHERE id = ?`,
       [id]
     );
     if (result.affectedRows === 0) {
