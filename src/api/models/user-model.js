@@ -32,8 +32,6 @@ const addUser = async (user) => {
     const rows1 = await promisePool.query(sql1, params1);
     const sqlId = `SELECT LAST_INSERT_ID() as user_id;`;
     const [rows] = await promisePool.query(sqlId);
-    console.log(rows);
-    console.log(rows[0].user_id);
 
     const sql2 = `INSERT INTO asiakas (email, puhelin, etunimi, sukunimi, katuosoite, postinumero, postitoimipaikka, tunnus_id)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?);`;
@@ -53,13 +51,21 @@ const addUser = async (user) => {
       return false;
     }
     await promisePool.query('COMMIT');
-
-    return {user_id: rows[0].insertId};
+    return {user_id: rows1[0].insertId};
   } catch (e) {
     console.error('Error in addUser:', e);
     await promisePool.query('ROLLBACK');
     return false;
   }
 };
-
-export {getUserByName, addUser};
+const findUserInfo = async (id) => {
+  const sql = `SELECT *
+  FROM asiakas
+  WHERE tunnus_id = ?`;
+  const [rows] = await promisePool.execute(sql, [id]);
+  if (rows.length === 0) {
+    return false;
+  }
+  return rows[0];
+};
+export {getUserByName, addUser, findUserInfo};

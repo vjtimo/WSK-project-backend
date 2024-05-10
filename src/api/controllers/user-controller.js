@@ -1,4 +1,4 @@
-import {addUser, getUserByName} from '../models/user-model.js';
+import {addUser, getUserByName, findUserInfo} from '../models/user-model.js';
 import {validationResult} from 'express-validator';
 import bcrypt from 'bcrypt';
 
@@ -18,6 +18,7 @@ const postUser = async (req, res, next) => {
   }
   req.body.salasana = bcrypt.hashSync(req.body.salasana, 10);
   const result = await addUser(req.body);
+  console.log(result);
   if (result.user_id) {
     res.status(201);
 
@@ -29,5 +30,18 @@ const postUser = async (req, res, next) => {
     return;
   }
 };
-
-export {postUser};
+const getUserInfo = async (req, res, next) => {
+  try {
+    const result = await findUserInfo(req.params.id);
+    if (!result) {
+      const error = new Error('User not found');
+      error.status = 404;
+      next(error);
+      return;
+    }
+    return res.status(200).json(result);
+  } catch (e) {
+    next(e);
+  }
+};
+export {postUser, getUserInfo};

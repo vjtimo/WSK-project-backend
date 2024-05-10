@@ -35,6 +35,7 @@ const getOrders = async (req, res, next) => {
     next(e);
   }
 };
+
 const setStatus = async (req, res, next) => {
   try {
     const result = await updateStatus(req.body.id, req.body.status);
