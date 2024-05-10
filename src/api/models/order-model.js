@@ -1,12 +1,12 @@
 import promisePool from '../../utils/database.js';
 
-const addOrder = async (rid, oid) => {
+const addOrder = async (rid, oid, toimitustapa) => {
   try {
     await promisePool.query('START TRANSACTION');
 
     await promisePool.query(
-      `INSERT INTO tilaus(ravintola_id,ostoskori_id) VALUES (?,?)`,
-      [rid, oid]
+      `INSERT INTO tilaus(ravintola_id,ostoskori_id,toimitustapa) VALUES (?,?,?)`,
+      [rid, oid, toimitustapa]
     );
 
     await promisePool.query(`UPDATE ostoskori SET active = 0 WHERE id = ?`, [
@@ -97,7 +97,6 @@ GROUP BY t.id,
 };
 const updateStatus = async (id, status) => {
   status++;
-  console.log('TEST2', status);
   const sql = `UPDATE tilaus SET tilaId = ? where id= ? `;
   try {
     const rows = promisePool.query(sql, [status, id]);
@@ -107,4 +106,5 @@ const updateStatus = async (id, status) => {
     throw new Error(`Failed to update order with ID ${id}: ${e.message}`);
   }
 };
+
 export {addOrder, findOrders, updateStatus, findOrderById};
